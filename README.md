@@ -12,6 +12,8 @@ In this directory, to make it run properly please run these commands in order:
 #### `yarn`
 This will install all dependencies.
 
+**Note**: Please run the next two commands in two seprate terminals.  
+
 #### `yarn watch`
 This will run TypeScript with watch flag (`tsc -w`) to convert it into JavaScript in the dist folder in real time.  
 
