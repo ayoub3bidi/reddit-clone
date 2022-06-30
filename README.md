@@ -3,7 +3,8 @@ A full-stack reddit clone.
 
 ## Setup
 
-### `constants.ts` file configuration
+### PostgreSQL database configuration
+You need PostgreSQL to be installed in your machine, then create a database you name it `redditBase`.  
 In the `src` folder you will find `example.constants.ts` please change it to `constants.ts` and replace 'your password' in `pwd`` with your PostgreSQL password.  
 
 ### Scripts
