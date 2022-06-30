@@ -21,6 +21,9 @@ This will run TypeScript with watch flag (`tsc -w`) to convert it into JavaScrip
 #### `yarn dev`
 This will listen to the code changes in the `index.js` file (from the dist folder) and run it in real time using nodemon.  
 
+#### `yarn create:migration`
+This will create migration using MikroORM CLI (`mikro-orm migration:create`).  
+
 ## Playing around with GraphQL
 Using the Apollo server you can play around with the GraphQL queries on [localhost:5000/graphql](http://localhost:5000/graphql).  
 You can check the `resolvers` folder to see the CRUD functions.  
