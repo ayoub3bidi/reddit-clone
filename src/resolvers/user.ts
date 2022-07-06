@@ -1,4 +1,4 @@
-import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Resolver } from "type-graphql";
+import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver } from "type-graphql";
 import { MyContext } from "src/types";
 import { User } from "../entities/User";
 import { RequiredEntityData } from "@mikro-orm/core";
@@ -31,11 +31,24 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
+    // Me 
+    @Query(() => User, {nullable: true})
+    async me(
+        @Ctx() { req, em }: MyContext
+        ) {
+        // you are not logged in
+        if (!req.session.userId) {
+            return null
+        }
+        const user = await em.findOne(User, {_id : Number(req.session.userId)})
+        return user
+    }
+
     // Register ------------------------
     @Mutation(() => UserResponse)
     async register(
         @Arg("userData", () => UsernamePasswordInput) userData: UsernamePasswordInput,
-        @Ctx() {em}: MyContext
+        @Ctx() { em, req }: MyContext
     ): Promise<UserResponse> {
         if (userData.username.length <= 2) {
             return {
@@ -71,6 +84,11 @@ export class UserResolver {
                 }
             }
         }
+        // *store user id session
+        // *this will set a cookie on the user
+        // *keep them logged in
+        req.session.userId = String(user._id)
+        
         return { user }
     }
 
@@ -78,7 +96,7 @@ export class UserResolver {
     @Mutation(() => UserResponse)
     async login(
         @Arg("userData", () => UsernamePasswordInput) userData: UsernamePasswordInput,
-        @Ctx() {em}: MyContext
+        @Ctx() { em, req }: MyContext
     ): Promise<UserResponse> {
         const user = await em.findOne(User, { username: userData.username })
         if (!user) {
@@ -102,6 +120,9 @@ export class UserResolver {
                 ]
             }
         }
+
+        req.session.userId = String(user._id)
+
         return { user }
     }
     
