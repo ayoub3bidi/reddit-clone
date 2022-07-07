@@ -1,11 +1,11 @@
-# Reddit Clone   
-A full-stack reddit clone.
+# Reddit Clone Server  
+This is the back-end part of the full-stack reddit clone.
 
 ## Setup
 
 ### PostgreSQL and Redis databases configuration
 * You need PostgreSQL to be installed in your machine, then create a database you name it `redditBase`.  
-In the `src` folder you will find `example.constants.ts` please change it to `constants.ts` and replace 'your password' in `pwd` with your PostgreSQL password.  
+In the `src` folder you will find `example.constants.ts` please change it to `constants.ts` and replace "your password" in `pwd` with your PostgreSQL password.  
 * You need Redis to be installed in your machine (for macOS or Linux you can go directly follow the [docs](https://redis.io/docs/getting-started/installation/), but for windows you need to install WSL2 first from [here](https://docs.microsoft.com/en-us/windows/wsl/install), then you can go to the docs).  
 To start the redis server you can run this command:
 ```
