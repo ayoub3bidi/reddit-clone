@@ -16,6 +16,12 @@ The page will reload when you make changes.\
 You may also see any lint errors in the console.  
 
 ```
+yarn gen
+```  
+
+Every time you need to add a `mutation` or a `query` you can write them in their proper file inside `graphql` folder. Then `gen` command will generate out a hook inside `generated` folder that you will use in your components.  
+
+```
 yarn build
 ```
 
