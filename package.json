@@ -1,0 +1,12 @@
+{
+  "name": "reddit-clone",
+  "version": "1.0.0",
+  "scripts": {
+    "client": "yarn --cwd frontend dev",
+    "server": "concurrently \"yarn --cwd backend watch\" \"yarn --cwd backend dev\"",
+    "dev": "concurrently \"yarn --cwd backend watch\" \"yarn --cwd backend dev\" \"yarn --cwd frontend dev\""
+  },
+  "repository": "https://github.com/ayoub3bidi/reddit-clone.git",
+  "author": "Ayoub Abidi",
+  "license": "MIT"
+}
