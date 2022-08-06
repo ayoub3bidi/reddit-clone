@@ -72,6 +72,13 @@ export class UserResolver {
              password: hashedPwd
         } as RequiredEntityData<User>)
         try {
+            // * a "barbarian" Knex query insertion option (don't worry about it)
+            // (em as EntityManager).createQueryBuilder(User).getKnexQuery().insert({
+            //     username: userData.username,
+            //     password: hashedPwd,
+            //     createdAt: new Date(),
+            //     updatedAt: new Date()
+            // })
             await em.persistAndFlush(user)
         } catch (err) {
             if (err.code == '23505' || err.detail.includes('already exists')) {
