@@ -1,6 +1,8 @@
+import { NavBar } from "../components/NavBar"
+
 const Index = () => (
   <div>
-    <h1>ohayo sekai</h1>
+    <NavBar/>
   </div>
 )
 

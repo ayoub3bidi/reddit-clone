@@ -1,7 +1,6 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import theme from '../theme'
 import { AppProps } from 'next/app'
-import { DarkModeSwitch } from '../components/DarkModeSwitch'
 import { createClient, Provider } from 'urql'
 
 const client = createClient({
@@ -15,7 +14,6 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Provider value={client}>
       <ChakraProvider theme={theme}>
-        <DarkModeSwitch/>
         <Component {...pageProps} />
       </ChakraProvider>
     </Provider>
