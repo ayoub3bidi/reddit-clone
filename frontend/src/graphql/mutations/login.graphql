@@ -5,8 +5,7 @@ mutation Login ($userData: UsernamePasswordInput!) {
       message
     }
     user {
-      _id
-      username
+      ...RegularUser
     }
   }
 }
