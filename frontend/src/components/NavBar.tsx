@@ -1,5 +1,5 @@
 import NextLink from "next/link";
-import { Box, Button, Flex, Heading } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Image, Stack } from "@chakra-ui/react";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 import { DarkModeSwitch } from "./DarkModeSwitch";
 
@@ -40,12 +40,17 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
   return (
     <Flex zIndex={1} position="sticky" bg="#2D3748" top={0} p={4}>
         <NextLink href="/">
+          <Stack direction="row">
+            <Box>
+              <Image boxSize="45px" src='https://i.ibb.co/DpT4sQx/logo.png' alt='Dan Abramov' />
+            </Box>
             <Heading color="#FF8b60">Reddit Clone</Heading>
+          </Stack>
         </NextLink>
-      <Flex flex={1} m="auto" align="center" maxW={1000}>
-            <Box ml={"auto"}>{body}</Box>
-      </Flex>
-      <DarkModeSwitch/>
+        <Flex flex={1} m="auto" align="center" maxW={1000}>
+              <Box ml={"auto"}>{body}</Box>
+        </Flex>
+        <DarkModeSwitch/>
     </Flex>
   );
 }
