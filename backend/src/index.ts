@@ -12,7 +12,7 @@ import { UserResolver } from "./resolvers/user";
 import session from "express-session";
 import connectRedis from 'connect-redis'
 import cors from 'cors'
-import { __prod__ } from "./constants";
+import { COOKIE, __prod__ } from "./constants";
 
 const main = async () => {
     const orm = await MikroORM.init(microConfig);
@@ -24,6 +24,11 @@ const main = async () => {
     const  RedisStore = connectRedis(session)
     const { createClient } = require("redis")
     const redisClient = createClient({ legacyMode: true })
+    // ! In case the operations on Apollo server (5000/graphql)
+    // ! didn't work comment app.use below
+    // ! and change cors in apolloServer.applyMiddleware below from "false"
+    // ! to { origin: "http://localhost:3000" }
+    // ! Pls revert this back after doing your operations to make the frontend work properly
     app.use(cors({
         origin: "http://localhost:3000",
         credentials: true,
@@ -32,7 +37,7 @@ const main = async () => {
 
     app.use(
         session({
-            name: 'slimen',
+            name: COOKIE,
             store: new RedisStore({
                 client: redisClient,
                 disableTTL: true,
@@ -65,6 +70,7 @@ const main = async () => {
         context: ({ req, res }) => ({ em: orm.em, req, res })
     })
     await apolloServer.start()
+    
     apolloServer.applyMiddleware({
         app,
         cors: false,
