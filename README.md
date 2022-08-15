@@ -22,3 +22,6 @@ yarn server
 ```  
 
 Runs the server side of the app in the development (it will run simultaneously both of the `watch` and `dev` commands) on [http://localhost:5000](http://localhost:5000).  
+
+  
+Note: for better experience with the comments please consider installing [Better comments](https://rb.gy/dgxjrh) extension on VS code.
