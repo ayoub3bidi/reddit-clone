@@ -1,17 +1,11 @@
-import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver } from "type-graphql";
+import { Arg, Ctx, Field, Mutation, ObjectType, Query, Resolver } from "type-graphql";
 import { MyContext } from "src/types";
 import { User } from "../entities/User";
 import { RequiredEntityData } from "@mikro-orm/core";
 import argon2 from 'argon2'
 import { COOKIE } from "../constants";
-
-@InputType()
-class UsernamePasswordInput {
-    @Field()
-    username: string
-    @Field()
-    password: string
-}
+import { validateRegister } from "../utils/validateRegister";
+import { UsernamePasswordInput } from "./UsernamePasswordInput";
 
 @ObjectType()
 class FieldError {
@@ -32,7 +26,14 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
-    // Me 
+    // ? forgot password
+    @Mutation(() => Boolean)
+    async forgotPassword( @Arg('email') email: string, @Ctx() {em}: MyContext) {
+        // const user = await em.findOne(User, { email })
+        return true
+    }
+
+    // ? Me 
     @Query(() => User, {nullable: true})
     async me(
         @Ctx() { req, em }: MyContext
@@ -45,37 +46,28 @@ export class UserResolver {
         return user
     }
 
-    // Register ------------------------
+    // ? Register ------------------------
     @Mutation(() => UserResponse)
     async register(
-        @Arg("userData", () => UsernamePasswordInput) userData: UsernamePasswordInput,
+        @Arg("userData") userData: UsernamePasswordInput,
         @Ctx() { em, req }: MyContext
     ): Promise<UserResponse> {
-        if (userData.username.length <= 2) {
-            return {
-                errors: [{
-                    field: 'username',
-                    message: "length must be greater that 2"
-                }]
-            }
+        const errors = validateRegister(userData)
+        if (errors) {
+            return { errors }
         }
-        if (userData.password.length <= 3) {
-            return {
-                errors: [{
-                    field: 'password',
-                    message: "length must be greater that 3"
-                }]
-            }
-        }
+
         const hashedPwd = await argon2.hash(userData.password)
         const user = em.create(User, {
             username: userData.username,
+            email: userData.email,
              password: hashedPwd
         } as RequiredEntityData<User>)
         try {
             // * a "barbarian" Knex query insertion option (don't worry about it)
             // (em as EntityManager).createQueryBuilder(User).getKnexQuery().insert({
             //     username: userData.username,
+            //     email: userData.email,
             //     password: hashedPwd,
             //     createdAt: new Date(),
             //     updatedAt: new Date()
@@ -100,13 +92,14 @@ export class UserResolver {
         return { user }
     }
 
-    // Login --------------------------
+    // ? Login --------------------------
     @Mutation(() => UserResponse)
     async login(
-        @Arg("userData", () => UsernamePasswordInput) userData: UsernamePasswordInput,
+        @Arg("usernameOrEmail") usernameOrEmail: string,
+        @Arg("password") password: string,
         @Ctx() { em, req }: MyContext
     ): Promise<UserResponse> {
-        const user = await em.findOne(User, { username: userData.username })
+        const user = await em.findOne(User, usernameOrEmail.includes('@') ? { email: usernameOrEmail } : { username: usernameOrEmail })
         if (!user) {
             return {
                 errors: [
@@ -117,7 +110,7 @@ export class UserResolver {
                 ]
             }
         }
-        const valid = await argon2.verify(user.password, userData.password)
+        const valid = await argon2.verify(user.password, password)
         if (!valid) {
             return {
                 errors: [

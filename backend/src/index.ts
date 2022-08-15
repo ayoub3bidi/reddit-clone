@@ -16,6 +16,11 @@ import { COOKIE, __prod__ } from "./constants";
 
 const main = async () => {
     const orm = await MikroORM.init(microConfig);
+
+    // ? use this to wipe ur data
+    // ? in case there's migration problems
+    // await orm.em.nativeDelete(User, {})
+
     await orm.getMigrator().up()
 
     const app = express(); 
