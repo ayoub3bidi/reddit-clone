@@ -2,11 +2,11 @@ import {Formik, Form} from 'formik'
 import { Button } from '@chakra-ui/react'
 import { Wrapper } from '../components/Wrapper'
 import { InputField } from '../components/InputField'
-import { toErrorMap } from '../utlis/toErrorMap'
+import { toErrorMap } from '../utils/toErrorMap'
 import { useRouter } from 'next/router'
 import { useLoginMutation } from '../generated/graphql'
 import { withUrqlClient } from 'next-urql'
-import { createUrqlClient } from '../utlis/createUrqlClient'
+import { createUrqlClient } from '../utils/createUrqlClient'
 
 const Login: React.FC<{}> = ({}) => {
     const router = useRouter()

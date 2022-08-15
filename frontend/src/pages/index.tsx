@@ -1,6 +1,6 @@
 import { NavBar } from "../components/NavBar"
 import { withUrqlClient } from "next-urql"
-import { createUrqlClient } from "../utlis/createUrqlClient"
+import { createUrqlClient } from "../utils/createUrqlClient"
 import { usePostsQuery } from "../generated/graphql"
 
 const Index = () => {
