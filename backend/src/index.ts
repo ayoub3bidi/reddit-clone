@@ -1,7 +1,5 @@
 import "reflect-metadata";
 import { MikroORM } from "@mikro-orm/core";
-// import { RequiredEntityData } from "@mikro-orm/core";
-// import { Post } from "./entities/Post";
 import microConfig from "./mikro-orm.config";
 import express from 'express'
 import { ApolloServer } from "apollo-server-express";
@@ -13,6 +11,7 @@ import session from "express-session";
 import connectRedis from 'connect-redis'
 import cors from 'cors'
 import { COOKIE, __prod__ } from "./constants";
+import Redis from "ioredis";
 
 const main = async () => {
     const orm = await MikroORM.init(microConfig);
@@ -25,10 +24,10 @@ const main = async () => {
 
     const app = express(); 
 
-// * connect-redis config for redis@v4
+    // * connect-redis config
     const  RedisStore = connectRedis(session)
-    const { createClient } = require("redis")
-    const redisClient = createClient({ legacyMode: true })
+    const redisClient = new Redis()
+    
     // ! In case the operations on Apollo server (5000/graphql)
     // ! didn't work comment app.use below
     // ! and change cors in apolloServer.applyMiddleware below from "false"
@@ -72,7 +71,7 @@ const main = async () => {
             resolvers: [HelloResolver, PostResolver, UserResolver],
             validate: false
         }),
-        context: ({ req, res }) => ({ em: orm.em, req, res })
+        context: ({ req, res }) => ({ em: orm.em, req, res, redisClient })
     })
     await apolloServer.start()
     

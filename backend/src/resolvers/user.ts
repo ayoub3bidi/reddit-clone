@@ -3,9 +3,11 @@ import { MyContext } from "src/types";
 import { User } from "../entities/User";
 import { RequiredEntityData } from "@mikro-orm/core";
 import argon2 from 'argon2'
-import { COOKIE } from "../constants";
+import { COOKIE, FORGET_PASSWORD_PREFIX } from "../constants";
 import { validateRegister } from "../utils/validateRegister";
 import { UsernamePasswordInput } from "./UsernamePasswordInput";
+import { sendEmail } from "../utils/sendEmail";
+import {v4} from "uuid"
 
 @ObjectType()
 class FieldError {
@@ -28,8 +30,25 @@ class UserResponse {
 export class UserResolver {
     // ? forgot password
     @Mutation(() => Boolean)
-    async forgotPassword( @Arg('email') email: string, @Ctx() {em}: MyContext) {
-        // const user = await em.findOne(User, { email })
+    async forgotPassword( @Arg('email') email: string, @Ctx() { em, redisClient }: MyContext) {
+        const user = await em.findOne(User, { email })
+        if (!user) {
+            // the email is not in the db
+            return true
+        }
+
+        const token = v4()
+        await redisClient.set(
+            FORGET_PASSWORD_PREFIX + token,
+            user._id, "EX" ,
+            1000 * 60 * 60 * 24 * 3 // ? this will stay 3 days
+        )
+        
+        await sendEmail(
+            email,
+            `<a href="http://localhost:3000/change-password/${token}">Reset password</a>`
+        )
+
         return true
     }
 
