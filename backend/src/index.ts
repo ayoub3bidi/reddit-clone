@@ -37,7 +37,6 @@ const main = async () => {
         origin: "http://localhost:3000",
         credentials: true,
     }))
-    redisClient.connect().catch(console.error)
 
     app.use(
         session({
