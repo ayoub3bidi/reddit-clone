@@ -2,16 +2,13 @@ import NextLink from "next/link";
 import { Box, Button, Flex, Heading, Image, Stack } from "@chakra-ui/react";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 import { DarkModeSwitch } from "./DarkModeSwitch";
-// import { isServer } from "../utlis/isServer";
 
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
   const [{fetching: logoutFetching}, logout] = useLogoutMutation()
   const [{ data, fetching }] = useMeQuery({
-    // ! i don't know what's the real reason
-    // ! but isServer function causes hydration problem
-    // pause: isServer()
+    // pause: isServer() // ! isServer function causes hydration problem
   });
   let body = null;
 
@@ -23,12 +20,16 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
     else if (!data?.me) {
         body = (
             <>
-                <Button mr={2}>
-                    <NextLink href="/register">Register</NextLink>
-                </Button>
-                <Button>
-                    <NextLink href="/login">Login</NextLink>
-                </Button>
+                <NextLink href="/register">
+                  <Button mr={2}>
+                      Register
+                  </Button>
+                </NextLink>
+                <NextLink href="/login">
+                  <Button mr={2}>
+                      Login
+                  </Button>
+                </NextLink>
             </>
         );
     }
