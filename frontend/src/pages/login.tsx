@@ -7,6 +7,7 @@ import { useRouter } from 'next/router'
 import { useLoginMutation } from '../generated/graphql'
 import { withUrqlClient } from 'next-urql'
 import { createUrqlClient } from '../utils/createUrqlClient'
+import NextLink from 'next/link'
 
 const Login: React.FC<{}> = ({}) => {
     const router = useRouter()
@@ -28,7 +29,8 @@ const Login: React.FC<{}> = ({}) => {
                     <Form>
                         <InputField name='usernameOrEmail' label='Username or Email' placeholder='Username or Email'/>
                         <InputField name='password' label='Password' placeholder='Password' type='password'/>
-                        <Button type='submit' isLoading={isSubmitting} bg='orange'>Login</Button>
+                        <Button mr={5} type='submit' isLoading={isSubmitting} bg="#FF4500">Login</Button>
+                        <NextLink href="/forgot-password"><Button bg="">Forgot password ?</Button></NextLink>
                     </Form>
                 )}
             </Formik>

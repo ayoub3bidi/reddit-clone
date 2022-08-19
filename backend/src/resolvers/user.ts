@@ -28,9 +28,66 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
-    // ? forgot password
+    // ? change password-------------------
+    @Mutation(() => UserResponse)
+    async changePassword(
+        @Arg("token") token: string,
+        @Arg("newPassword") newPassword: string,
+        @Ctx() { redisClient, em, req }: MyContext
+    ) : Promise<UserResponse> {
+        if (newPassword.length <= 2) {
+            return {
+                errors: [
+                    {
+                        field: "newPassword",
+                        message: "Length must be greater than 2",
+                    },
+                ],
+            };
+        }
+        const key = FORGET_PASSWORD_PREFIX + token;
+        const userId = await redisClient.get(key)
+        if (!userId) {
+            return {
+                errors: [
+                    {
+                        field: "token",
+                        message: "Token expired"
+                    }
+                ]
+            }
+        }
+
+        const user = await em.findOne(User, { _id: parseInt(userId) })
+
+        if (!user) {
+            return {
+                errors: [
+                    {
+                        field: "token",
+                        message: "User no longer exist"
+                    }
+                ]
+            }
+        }
+
+        user.password = await argon2.hash(newPassword)
+        await em.persistAndFlush(user)
+
+        await redisClient.del(key)
+
+        // * login user after change password
+        req.session.userId = user._id.toString()
+
+        return { user }
+    }
+
+    // ? forgot password-------------------
     @Mutation(() => Boolean)
-    async forgotPassword( @Arg('email') email: string, @Ctx() { em, redisClient }: MyContext) {
+    async forgotPassword(
+        @Arg('email') email: string,
+        @Ctx() { em, redisClient }: MyContext
+        ) {
         const user = await em.findOne(User, { email })
         if (!user) {
             // the email is not in the db
@@ -41,7 +98,7 @@ export class UserResolver {
         await redisClient.set(
             FORGET_PASSWORD_PREFIX + token,
             user._id, "EX" ,
-            1000 * 60 * 60 * 24 * 3 // ? this will stay 3 days
+            1000 * 60 * 60 * 24 * 3 // ? 3 days
         )
         
         await sendEmail(
@@ -52,7 +109,7 @@ export class UserResolver {
         return true
     }
 
-    // ? Me 
+    // ? Me----------------------------
     @Query(() => User, {nullable: true})
     async me(
         @Ctx() { req, em }: MyContext
@@ -145,6 +202,8 @@ export class UserResolver {
 
         return { user }
     }
+
+    // ? Logout---------------------------
     @Mutation(() => Boolean)
     logout(@Ctx() { req, res }: MyContext) {
         return new Promise((resolve) =>

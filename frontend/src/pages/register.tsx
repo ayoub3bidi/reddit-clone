@@ -32,7 +32,7 @@ const Register: React.FC<registerProps> = ({}) => {
                         <InputField name='username' label='Username' placeholder='Username'/>
                         <InputField name='email' label='Email' placeholder='Email'/>
                         <InputField name='password' label='Password' placeholder='Password' type='password'/>
-                        <Button type='submit' isLoading={isSubmitting} bg='orange'>Register</Button>
+                        <Button type='submit' isLoading={isSubmitting} bg="#FF4500">Register</Button>
                     </Form>
                 )}
             </Formik>
