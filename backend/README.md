@@ -4,25 +4,22 @@ This is the back-end part of the full-stack reddit clone.
 ## Setup
 
 ### PostgreSQL and Redis databases configuration
-* You need PostgreSQL to be installed in your machine, then create a database you name it `redditBase`.  
-In the `src` folder you will find `example.constants.ts` please change it to `constants.ts` and replace "your password" in `pwd` with your PostgreSQL password.  
+* You need PostgreSQL to be installed in your machine, then create a database you name it `redditBase2`.  
+**Note**: `redditBase` was the first database, created originally for `MikroORM` configuration, but I changed to `TypeORM` this is why I created the second one for fresh use and configuration.  
+* In the `src` folder you will find `example.constants.ts` change it to `constants.ts` and replace "your password" in `pwd` with your PostgreSQL password.  
 * You need Redis to be installed in your machine (for macOS or Linux you can go directly follow the [docs](https://redis.io/docs/getting-started/installation/), but for windows you need to install WSL2 first from [here](https://docs.microsoft.com/en-us/windows/wsl/install), then you can go to the docs).  
 
 ### Scripts
-In this directory, to make it run properly please run these commands in order:  
+In this directory, to make it run properly run these commands in order:  
 
 ```
 yarn
 ```
-This will install all dependencies.  
-
-On the WSL terminal please run:
+This will install all dependencies. Next , on your WSL terminal run:
 ```
 sudo service redis-server start
 ```
-This will start the redis server.  
-
-Next, please run the next two commands in two seprate terminals.  
+This will start the redis server. Finally, run the next two commands in two seprate terminals.  
 
 ```
 yarn watch
@@ -34,12 +31,12 @@ yarn dev
 ```
 This will listen to the code changes in the `index.js` file (from the dist folder) and run it in real time using nodemon.  
 
-## Migrations creation  
+<!-- ## Migrations creation  
 After adding/modifying `entities` you need to run this command:
 ```
 yarn create:migration
 ```
-This will create migration using MikroORM CLI (`mikro-orm migration:create`) and it will make modifications to your database properly.  
+This will create migration using MikroORM CLI (`mikro-orm migration:create`) and it will make modifications to your database properly.   -->
 
 ## Playing around with GraphQL
 Using the Apollo server you can play around with the GraphQL queries on [localhost:5000/graphql](http://localhost:5000/graphql).  You can check the `resolvers` folder to see the CRUD functions.  
