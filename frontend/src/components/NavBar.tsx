@@ -38,6 +38,7 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
         body = (
         <Flex align="center">
             <Box mr={2} color="#FF8b60">You logged in as <b>{data.me.username}</b> </Box>
+            <NextLink href="/create-post"><Button ml={5}>Create Post</Button></NextLink>
             <Button ml={5} onClick={() => { logout() }} isLoading={logoutFetching}>Logout</Button>
         </Flex>
         );
