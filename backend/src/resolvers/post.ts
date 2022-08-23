@@ -1,7 +1,8 @@
 import { Post } from "../entities/Post";
-import { Arg, Ctx, Field, InputType, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
+import { Arg, Ctx, Field, InputType, Int, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
 import { MyContext } from "src/types";
 import { isAuth } from "../middleware/isAuth";
+import datasource from '../type-orm.config'
 
 @InputType()
 class PostInput {
@@ -13,17 +14,29 @@ class PostInput {
 
 @Resolver()
 export class PostResolver {
-    // GET Posts
+    // * GET Posts
     @Query(() => [Post])
-    posts(): Promise<Post[]> {
-        return Post.find()
+    async posts(
+        @Arg("limit", () => Int) limit: number,
+        @Arg("cursor", () => String, { nullable: true }) cursor: string | null
+    ): Promise<Post[]> {
+        const realLimit = Math.min(50, limit)
+        const queryBuilder = await datasource
+            .getRepository(Post)
+            .createQueryBuilder("post")
+            .orderBy('"createdAt"', "DESC")
+            .take(realLimit)
+        if (cursor) {
+            queryBuilder.where('"createdAt" < :cursor', { cursor: new Date (parseInt(cursor)) })
+        }
+        return queryBuilder.getMany()
     }
     // GET Post by id
     @Query(() => Post, {nullable: true})
     post(@Arg("id") _id: number): Promise<Post | null> {
         return Post.findOne({ where: { _id: _id } })
     }
-    // POST Post
+    // * POST Post
     @Mutation(() => Post)
     @UseMiddleware(isAuth)
     async createPost(
@@ -35,7 +48,7 @@ export class PostResolver {
             creatorId: req.session.userId
         }).save()
     }
-    // UPDATE Post
+    //* UPDATE Post
     @Mutation(() => Post, {nullable: true})
     async updatePost(
         @Arg("id") _id: number,
@@ -50,7 +63,7 @@ export class PostResolver {
         }
         return post
     }
-    // DELETE Post
+    // * DELETE Post
     @Mutation(() => Boolean)
     async deletePost(@Arg("id") _id: number): Promise<boolean> {
         await Post.delete({ _id: _id })
