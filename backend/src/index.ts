@@ -13,21 +13,14 @@ import Redis from "ioredis";
 import datasource from './type-orm.config'
 
 const main = async () => {
-
-    // ! MikroORM (unfortunately been replaced by TypeORM)-----------------------
-    // const orm = await MikroORM.init(microConfig); // ? MikroORM database connection
-    // await orm.em.nativeDelete(User, {}) // ? use this to wipe ur data in case there's migration problems
-    // await orm.getMigrator().up()
-    // ! --------------------------------
-
     // * typeORM database connection
     await datasource.initialize()
-    .then(() => {
-        console.log("Data Source has been initialized!")
-    })
-    .catch((err) => {
-        console.error("Error during Data Source initialization", err)
-    })
+        .then(() => {
+            console.log("Data Source has been initialized!")
+        })
+        .catch((err) => {
+            console.error("Error during Data Source initialization", err)
+        })
     await datasource.runMigrations()
 
     const app = express(); 
@@ -43,7 +36,6 @@ const main = async () => {
         origin: "http://localhost:3000",
         credentials: true,
     }))
-    // ! -------------------------------
 
     app.use(
         session({
@@ -64,14 +56,7 @@ const main = async () => {
             resave: false,
         })
     )
-    
-    // ! MikroORM post creation -------------------
-    // const post = orm.em.fork({}).create(Post, {title: "my first post"} as RequiredEntityData<Post>);
-    // await orm.em.persistAndFlush(post);
-    // const posts = await orm.em.find(Post, {})
-    // console.log(posts)
-    // ! -----------------------------------------
-    
+
     // * Apollo server 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
@@ -85,6 +70,7 @@ const main = async () => {
     apolloServer.applyMiddleware({
         app,
         cors: false,
+        // cors: { origin: "*" }
     })
 
     app.listen(5000, () => {
