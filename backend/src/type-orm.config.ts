@@ -1,3 +1,4 @@
+import path from "path";
 import { DataSource } from "typeorm";
 import { pwd } from "./constants";
 import { Post } from "./entities/Post";
@@ -10,5 +11,6 @@ export default new DataSource({
     password: pwd,
     logging: true,
     synchronize: true,
+    migrations: [path.join(__dirname, "./migrations/*")],
     entities: [Post, User]
 })
