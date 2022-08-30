@@ -31,12 +31,11 @@ yarn dev
 ```
 This will listen to the code changes in the `index.js` file (from the dist folder) and run it in real time using nodemon.  
 
-<!-- ## Migrations creation  
-After adding/modifying `entities` you need to run this command:
 ```
 yarn create:migration
 ```
-This will create migration using MikroORM CLI (`mikro-orm migration:create`) and it will make modifications to your database properly.   -->
+This will create migration using typeORM CLI (`typeorm migration:create src/migrations/migration`).  
+**Note**: The docs are outdated lately where the `-n MigrationName` is [no longer supported](https://stackoverflow.com/questions/71879806/how-can-i-specify-the-migrations-directory-for-typeorm-cli) but if you want to specify the name of your migration you can run `typeorm migration:create src/migrations/MigrationName`.  
 
 ## Playing around with GraphQL
 Using the Apollo server you can play around with the GraphQL queries on [localhost:5000/graphql](http://localhost:5000/graphql).  You can check the `resolvers` folder to see the CRUD functions.  

@@ -23,6 +23,8 @@ const main = async () => {
         })
     await datasource.runMigrations()
 
+    // await Post.delete({}) //? this will delete all posts from DB
+
     const app = express(); 
 
     // * connect-redis config
