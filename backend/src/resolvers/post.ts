@@ -30,16 +30,39 @@ export class PostResolver {
     ): Promise<PaginatedPosts> {
         const realLimit = Math.min(50, limit)
         const realLimitPlusOne = Math.min(50, limit) + 1
-        const queryBuilder = await datasource
+        const queryBuilder = datasource
             .getRepository(Post)
             .createQueryBuilder("post")
-            .orderBy('"createdAt"', "DESC")
+            // ! TypeError: Cannot read property 'databaseName' of undefined
+            // .innerJoinAndSelect("creator", "user", 'user._id = CAST (post."creatorId" as INTEGER)')
+            .orderBy('post."createdAt"', "DESC")
             .take(realLimitPlusOne)
         if (cursor) {
-            queryBuilder.where('"createdAt" < :cursor', { cursor: new Date (parseInt(cursor)) })
+            queryBuilder.where('post."createdAt" < :cursor', { cursor: new Date (parseInt(cursor)) })
         }
 
         const posts = await queryBuilder.getMany()
+
+        // ? this is SQL query option but it didn't work either
+        // const replacements: any[] = [realLimitPlusOne];
+        // if (cursor) {
+        // replacements.push(new Date(parseInt(cursor)));
+        // }
+        // const posts = await datasource.query(`
+        //     SELECT post.*,
+        //     json_build_object(
+        //         'id', user._id,
+        //         'username', user.username
+        //         'email', user.email
+        //         'createdAt', user.createdAt
+        //         'updatedAt', user.updatedAt
+        //     ) creator
+        //     FROM post
+        //     INNER JOIN public.user ON user._id = CAST (post."creatorId" as INTEGER)
+        //     ${cursor ? `WHERE p."createdAt" < $2` : ""}
+        //     ORDER BY post."createdAt" DESC
+        //     LIMIT $1
+        // `, replacements);
 
         return { posts: posts.slice(0, realLimit) , hasMore: posts.length === realLimitPlusOne }
     }
