@@ -22,6 +22,31 @@ class PaginatedPosts {
 
 @Resolver()
 export class PostResolver {
+    // * Upvote
+    @Mutation(()  => Boolean)
+    @UseMiddleware(isAuth)
+    async vote(
+        @Arg("postId", () => Int) postId: number,
+        @Arg("value", () => Int) value: number,
+        @Ctx() { req }: MyContext
+    ) {
+        const isUpvote = value !== -1;
+        const realValue = isUpvote ? 1 : -1;
+        const userId = parseInt(req.session.userId)
+        await datasource.query(
+            `
+            START TRANSACTION;
+            INSERT INTO upvote ("userid", "postId", value)
+            value (${userId}, ${postId}, ${realValue});
+            UPDATE post
+            SET points = points + ${realValue}
+            WHERE _id = ${postId};
+            COMMIT;
+            `
+        )
+    }
+
+
     // * GET Posts
     @Query(() => PaginatedPosts)
     async posts(
@@ -66,7 +91,7 @@ export class PostResolver {
 
         return { posts: posts.slice(0, realLimit) , hasMore: posts.length === realLimitPlusOne }
     }
-    // GET Post by id
+    // * GET Post by id
     @Query(() => Post, {nullable: true})
     post(@Arg("id") _id: number): Promise<Post | null> {
         return Post.findOne({ where: { _id: _id } })
