@@ -2,6 +2,7 @@ import { Box, Button, Flex, Heading, Spinner, Stack, Text } from "@chakra-ui/rea
 import { withUrqlClient } from "next-urql"
 import { useState } from "react"
 import { Layout } from "../components/Layout"
+import { UpvoteSection } from "../components/UpvoteSection"
 import { usePostsQuery } from "../generated/graphql"
 import { createUrqlClient } from "../utils/createUrqlClient"
 
@@ -24,10 +25,13 @@ const Index = () => {
             <span>Loading just wait a sec...</span>
           </div>
           :data!.posts.posts.map(post => 
-            <Box key={post._id} p={5} shadow='md' borderWidth='1px'>
-              <Heading fontSize='xl'>{post.title}</Heading>
-              <Text mt={4}>{post.text.slice(0, 50)}...</Text>
-            </Box>
+            <Flex key={post._id} p={5} shadow='md' borderWidth='1px'>
+              <UpvoteSection post={post}/>
+              <Box>
+                <Heading fontSize='xl'>{post.title}</Heading>
+                <Text mt={4}>{post.text.slice(0, 50)}...</Text>
+              </Box>
+            </Flex>
           )}
       </Stack>
       { data && data.posts.hasMore ? (
