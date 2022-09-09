@@ -3,6 +3,7 @@ import { Arg, Ctx, Field, InputType, Int, Mutation, ObjectType, Query, Resolver,
 import { MyContext } from "src/types";
 import { isAuth } from "../middleware/isAuth";
 import datasource from '../type-orm.config'
+import { Upvote } from "../entities/Upvote";
 
 @InputType()
 class PostInput {
@@ -33,19 +34,51 @@ export class PostResolver {
         const isUpvote = value !== -1;
         const realValue = isUpvote ? 1 : -1;
         const userId = parseInt(req.session.userId)
-        await datasource.query(
-            `
-            START TRANSACTION;
-            INSERT INTO upvote ("userid", "postId", value)
-            value (${userId}, ${postId}, ${realValue});
-            UPDATE post
-            SET points = points + ${realValue}
-            WHERE _id = ${postId};
-            COMMIT;
-            `
-        )
-    }
+        const upvote = await Upvote.findOne({ where: { postId, userId } });
 
+        // ? the user has voted on the post before
+        // ? and they are changing their vote
+        if (upvote && upvote.value !== realValue) {
+            await datasource.transaction(async (tm) => {
+                await tm.query(
+                `
+                    update updoot
+                    set value = $1
+                    where "postId" = $2 and "userId" = $3
+                `,
+                [realValue, postId, userId]
+                );
+
+                await tm.query(
+                `
+                    update post
+                    set points = points + $1
+                    where id = $2
+                `,
+                [2 * realValue, postId]
+                );
+            });
+        } else if (!upvote) {
+            // ? has never voted before
+            await datasource.transaction(async (tm) => {
+                await tm.query(
+                `
+                    insert into updoot ("userId", "postId", value)
+                    values ($1, $2, $3)
+                `,
+                [userId, postId, realValue]
+                );
+
+                await tm.query(
+                `
+                    update post
+                    set points = points + $1
+                    where id = $2
+                `, [realValue, postId]);
+            });
+        }
+        return true;
+    }
 
     // * GET Posts
     @Query(() => PaginatedPosts)
