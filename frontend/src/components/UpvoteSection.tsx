@@ -15,9 +15,35 @@ export const UpvoteSection: React.FC<UpvoteSectionProps> = ({ post }) => {
         justifyContent="center"
         justifyItems="center"
         mr={5}>
-            <IconButton onClick={async () => { await vote({ postId: post._id, value: 1 }) }} aria-label='Vote up' icon={<TriangleUpIcon/>}/>
+            <IconButton
+                onClick={async () => {
+                    if (post.voteStatus === 1) {
+                        return;
+                    }
+                    await vote({
+                        postId: post._id,
+                        value: 1
+                    }) 
+                }}
+                aria-label='Vote up'
+                icon={<TriangleUpIcon/>}
+                colorScheme={post.voteStatus === 1 ? 'green' : undefined}
+            />
                 <Text ml={4}>{post.points}</Text>
-            <IconButton onClick={async () => { await vote({ postId: post._id, value: -1 }) }} aria-label='Vote down' icon={<TriangleDownIcon/>}/>
+            <IconButton
+                onClick={async () => {
+                    if (post.voteStatus === -1) {
+                        return;
+                    }
+                    await vote({
+                        postId: post._id,
+                        value: -1
+                    }) 
+                }}
+                aria-label='Vote down'
+                icon={<TriangleDownIcon/>}
+                colorScheme={post.voteStatus === -1 ? 'red' : undefined}
+            />
         </Flex>
     )
 }

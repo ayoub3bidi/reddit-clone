@@ -84,7 +84,8 @@ export class PostResolver {
     @Query(() => PaginatedPosts)
     async posts(
         @Arg("limit", () => Int) limit: number,
-        @Arg("cursor", () => String, { nullable: true }) cursor: string | null
+        @Arg("cursor", () => String, { nullable: true }) cursor: string | null,
+        // @Ctx() { req }: MyContext
     ): Promise<PaginatedPosts> {
         const realLimit = Math.min(50, limit)
         const realLimitPlusOne = Math.min(50, limit) + 1
@@ -102,7 +103,7 @@ export class PostResolver {
         const posts = await queryBuilder.getMany()
 
         // ? this is SQL query option but it didn't work either
-        // const replacements: any[] = [realLimitPlusOne];
+        // const replacements: any[] = [realLimitPlusOne, req.session.userId];
         // if (cursor) {
         // replacements.push(new Date(parseInt(cursor)));
         // }
@@ -114,10 +115,11 @@ export class PostResolver {
         //         'email', user.email
         //         'createdAt', user.createdAt
         //         'updatedAt', user.updatedAt
-        //     ) creator
+        //     ) creator,
+        //     ${ req.session.userId ? '(SELECT value FROM upvote WHERE "userId" = $2 AND "postId" = post._id) "voteStatus"' : 'null as "voteStatus"' }
         //     FROM post
         //     INNER JOIN public.user ON user._id = CAST (post."creatorId" as INTEGER)
-        //     ${cursor ? `WHERE p."createdAt" < $2` : ""}
+        //     ${cursor ? `WHERE p."createdAt" < $3` : ""}
         //     ORDER BY post."createdAt" DESC
         //     LIMIT $1
         // `, replacements);

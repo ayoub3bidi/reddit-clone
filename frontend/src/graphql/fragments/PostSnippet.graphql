@@ -3,6 +3,7 @@ fragment PostSnippet on Post {
     title
     text
     points
+    voteStatus
     createdAt
     updatedAt
 }
