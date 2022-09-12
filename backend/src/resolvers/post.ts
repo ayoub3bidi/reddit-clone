@@ -103,9 +103,14 @@ export class PostResolver {
         const posts = await queryBuilder.getMany()
 
         // ? this is SQL query option but it didn't work either
-        // const replacements: any[] = [realLimitPlusOne, req.session.userId];
+        // const replacements: any[] = [realLimitPlusOne];
+        // if (req.session.userId) {
+        //     replacements.push(req.session.userId)
+        // }
+        // let cursorIdx = 3
         // if (cursor) {
-        // replacements.push(new Date(parseInt(cursor)));
+        //     replacements.push(new Date(parseInt(cursor)));
+        //     cursorIdx = replacements.length
         // }
         // const posts = await datasource.query(`
         //     SELECT post.*,
@@ -119,7 +124,7 @@ export class PostResolver {
         //     ${ req.session.userId ? '(SELECT value FROM upvote WHERE "userId" = $2 AND "postId" = post._id) "voteStatus"' : 'null as "voteStatus"' }
         //     FROM post
         //     INNER JOIN public.user ON user._id = CAST (post."creatorId" as INTEGER)
-        //     ${cursor ? `WHERE p."createdAt" < $3` : ""}
+        //     ${cursor ? `WHERE p."createdAt" < ${cursorIdx}` : ""}
         //     ORDER BY post."createdAt" DESC
         //     LIMIT $1
         // `, replacements);

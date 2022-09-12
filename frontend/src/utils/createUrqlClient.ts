@@ -4,6 +4,7 @@ import { dedupExchange, Exchange, fetchExchange, gql, stringifyVariables } from 
 import { pipe, tap } from "wonka";
 import { LoginMutation, LogoutMutation, MeDocument, MeQuery, RegisterMutation, VoteMutationVariables } from "../generated/graphql";
 import { betterUpdateQuery } from "./betterUpdateQuery";
+import { isServer } from "./isServer";
 
 const errorExchange: Exchange = ({ forward }) => (ops$) => {
   return pipe(
@@ -50,10 +51,20 @@ export const cursorPagination = (): Resolver => {
   };
 };
 
-export const createUrqlClient = (ssrExchange: any) => ({
+export const createUrqlClient = (ssrExchange: any, ctx: any) => {
+  let cookie = ''
+  if (isServer()) {
+    cookie = ctx.req.headers.cookie
+  }
+  return {
     url: "http://localhost:5000/graphql",
     fetchOptions: {
       credentials: "include" as const,
+      headers: cookie
+        ? {
+            cookie,
+          }
+        : undefined
     },
     exchanges: [dedupExchange, cacheExchange({
         keys: {
@@ -148,4 +159,4 @@ export const createUrqlClient = (ssrExchange: any) => ({
       ssrExchange,
       fetchExchange
     ]
-  });
+  }};
