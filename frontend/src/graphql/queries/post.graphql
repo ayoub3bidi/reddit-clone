@@ -1,0 +1,5 @@
+query Post($postId: Float!) {
+  post(id: $postId) {
+    ...PostSnippet
+  }
+}
