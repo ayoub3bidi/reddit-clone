@@ -47,7 +47,7 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
   return (
     <Flex zIndex={1} position="sticky" bg="#2D3748" top={0} p={4}>
         <NextLink href="/">
-          <Stack direction="row">
+          <Stack style={{ cursor: "pointer" }} direction="row">
             <Box>
               <Image boxSize="45px" src='https://i.ibb.co/DpT4sQx/logo.png' alt='Dan Abramov' />
             </Box>
