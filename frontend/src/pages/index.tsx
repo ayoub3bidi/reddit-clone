@@ -1,17 +1,19 @@
-import { Box, Button, Flex, Heading, Link, Spinner, Stack, Text } from "@chakra-ui/react"
+import { Box, Button, Flex, Heading, IconButton, Link, Spinner, Stack, Text } from "@chakra-ui/react"
 import { withUrqlClient } from "next-urql"
 import { useState } from "react"
 import { Layout } from "../components/Layout"
 import { UpvoteSection } from "../components/UpvoteSection"
-import { usePostsQuery } from "../generated/graphql"
+import { useDeletePostMutation, usePostsQuery } from "../generated/graphql"
 import { createUrqlClient } from "../utils/createUrqlClient"
 import NextLink from "next/link";
+import { DeleteIcon } from "@chakra-ui/icons"
 
 const Index = () => {
   const [variables, setVariables] = useState({limit: 10, cursor: null as null | string  })
   const [{data, fetching}] = usePostsQuery({
     variables,
   })
+  const [,deletePost] = useDeletePostMutation()
 
   if (!fetching && !data) { 
     return <div>You got Query fail for some reason</div>
@@ -25,18 +27,30 @@ const Index = () => {
             <Spinner mr={2} />
             <span>Loading just wait a sec...</span>
           </div>
-          :data!.posts.posts.map(post => 
-            <Flex key={post._id} p={5} shadow='md' borderWidth='1px'>
-              <UpvoteSection post={post}/>
-              <Box>
-                <NextLink href="/post/[id]" as={`/post/${post._id}`}>
-                  <Link style={{ textDecoration: 'none' }}>
-                    <Heading fontSize='xl'>{post.title}</Heading>
-                  </Link>
-                </NextLink>
-                <Text mt={4}>{post.text.slice(0, 50)}...</Text>
-              </Box>
-            </Flex>
+          :data!.posts.posts.map(post => !post ? null : (
+              <Flex key={post._id} p={5} shadow='md' borderWidth='1px'>
+                <UpvoteSection post={post}/>
+                <Box flex={1}>
+                  <NextLink href="/post/[id]" as={`/post/${post._id}`}>
+                    <Link style={{ textDecoration: 'none' }}>
+                      <Heading fontSize='xl'>{post.title}</Heading>
+                    </Link>
+                  </NextLink>
+                  <Flex align="center">
+                    <Text flex={1} mt={4}>{post.text.slice(0, 50)}...</Text>
+                    <IconButton
+                      ml="auto"
+                      aria-label='Delete Post'
+                      colorScheme='red'
+                      icon={<DeleteIcon />}
+                      onClick={() => {
+                        deletePost({ id: post._id })
+                      }}
+                    />
+                  </Flex>
+                </Box>
+              </Flex>
+            )
           )}
       </Stack>
       { data && data.posts.hasMore ? (
