@@ -6,7 +6,7 @@ import { UpvoteSection } from "../components/UpvoteSection"
 import { useDeletePostMutation, usePostsQuery } from "../generated/graphql"
 import { createUrqlClient } from "../utils/createUrqlClient"
 import NextLink from "next/link";
-import { DeleteIcon } from "@chakra-ui/icons"
+import { DeleteIcon, EditIcon } from "@chakra-ui/icons"
 
 const Index = () => {
   const [variables, setVariables] = useState({limit: 10, cursor: null as null | string  })
@@ -38,15 +38,26 @@ const Index = () => {
                   </NextLink>
                   <Flex align="center">
                     <Text flex={1} mt={4}>{post.text.slice(0, 50)}...</Text>
-                    <IconButton
-                      ml="auto"
-                      aria-label='Delete Post'
-                      colorScheme='red'
-                      icon={<DeleteIcon />}
-                      onClick={() => {
-                        deletePost({ id: post._id })
-                      }}
-                    />
+                    <Box ml="auto">
+                      <NextLink
+                        href='/post/edit/[id]'
+                        as={`/post/edit/${post._id}`}
+                      >
+                        <IconButton
+                          as={Link}
+                          mr={4}
+                          aria-label='Edit Post'
+                          icon={<EditIcon />}
+                        />
+                      </NextLink>
+                      <IconButton
+                        aria-label='Delete Post'
+                        icon={<DeleteIcon />}
+                        onClick={() => {
+                          deletePost({ id: post._id })
+                        }}
+                      />
+                    </Box>
                   </Flex>
                 </Box>
               </Flex>
