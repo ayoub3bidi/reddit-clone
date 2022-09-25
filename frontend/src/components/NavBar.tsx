@@ -2,10 +2,12 @@ import NextLink from "next/link";
 import { Box, Button, Flex, Heading, Image, Stack } from "@chakra-ui/react";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 import { DarkModeSwitch } from "./DarkModeSwitch";
+import { useRouter } from "next/router";
 
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
+  const router = useRouter()
   const [{fetching: logoutFetching}, logout] = useLogoutMutation()
   const [{ data, fetching }] = useMeQuery({
     // pause: isServer() // ! isServer function causes hydration problem
@@ -39,7 +41,7 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
         <Flex align="center">
             <Box mr={2} color="#FF8b60">You logged in as <b>{data.me.username}</b> </Box>
             <NextLink href="/create-post"><Button ml={5}>Create Post</Button></NextLink>
-            <Button ml={5} onClick={() => { logout() }} isLoading={logoutFetching}>Logout</Button>
+            <Button ml={5} onClick={async () => { await logout(); router.reload() }} isLoading={logoutFetching}>Logout</Button>
         </Flex>
         );
     }
