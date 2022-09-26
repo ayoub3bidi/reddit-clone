@@ -6,7 +6,7 @@ This is the back-end part of the full-stack reddit clone.
 ### PostgreSQL and Redis databases configuration
 * You need PostgreSQL to be installed in your machine, then create a database you name it `redditBase2`.  
 **Note**: `redditBase` was the first database, created originally for `MikroORM` configuration, but I changed to `TypeORM` this is why I created the second one for fresh use and configuration.  
-* In the `src` folder you will find `example.constants.ts` change it to `constants.ts` and replace "your password" in `pwd` with your PostgreSQL password.  
+* In the `src` folder you will find `example.constants.ts`, change it to `constants.ts` and replace "your password" in `pwd` with your PostgreSQL password. You will find `.env.example` too, change it to `.env` and replace "posgres-username" and "pwd" with your postgres username and password.  
 * You need Redis to be installed in your machine (for macOS or Linux you can go directly follow the [docs](https://redis.io/docs/getting-started/installation/), but for windows you need to install WSL2 first from [here](https://docs.microsoft.com/en-us/windows/wsl/install), then you can go to the docs).  
 
 ### Scripts

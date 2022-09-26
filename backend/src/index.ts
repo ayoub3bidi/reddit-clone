@@ -29,13 +29,13 @@ const main = async () => {
 
     // * connect-redis config
     const  RedisStore = connectRedis(session)
-    const redisClient = new Redis()
+    const redisClient = new Redis(process.env.REDIS_URL)
     
     // ! In case the operations on Apollo server (5000/graphql) didn't work comment app.use below
     // ! and change cors in apolloServer.applyMiddleware below from "false" to { origin: "http://localhost:3000" } or { origin: "*" }
     // ! Pls revert this back after doing your operations to make the frontend work properly
     app.use(cors({
-        origin: "http://localhost:3000",
+        origin: process.env.CORS_ORIGIN,
         credentials: true,
     }))
 
@@ -54,7 +54,7 @@ const main = async () => {
                 secure: __prod__ // * cookie only works in https
             },
             saveUninitialized: false,
-            secret: "lesgotothebeach",
+            secret: process.env.SESSION_SECRET,
             resave: false,
         })
     )
@@ -75,7 +75,7 @@ const main = async () => {
         // cors: { origin: "*" }
     })
 
-    app.listen(5000, () => {
+    app.listen(parseInt(process.env.PORT), () => {
         console.log('server started on localhost: 5000')
     })
 };
