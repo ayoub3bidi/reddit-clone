@@ -1,5 +1,6 @@
 # Reddit Clone    
 A full-stack reddit clone.  
+**Note**: This Project is still missing some features and got some issues but overall it was a nice ride and worth the time.  
 
 ## Available Scripts
 

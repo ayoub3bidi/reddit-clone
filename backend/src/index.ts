@@ -30,6 +30,7 @@ const main = async () => {
     // * connect-redis config
     const  RedisStore = connectRedis(session)
     const redisClient = new Redis(process.env.REDIS_URL)
+    app.set("proxy", 1)
     
     // ! In case the operations on Apollo server (5000/graphql) didn't work comment app.use below
     // ! and change cors in apolloServer.applyMiddleware below from "false" to { origin: "http://localhost:3000" } or { origin: "*" }
