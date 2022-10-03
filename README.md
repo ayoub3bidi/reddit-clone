@@ -1,6 +1,9 @@
 # Reddit Clone    
-A full-stack reddit clone.  
-**Note**: This Project is still missing some features and got some issues but overall it was a nice ride and worth the time.  
+![interface example](https://i.ibb.co/PQyw3zm/image.png)
+**Notes**: 
+- This Project is still missing some features and got some issues but overall it was a nice ride and worth the time.  
+- For better dev experience with the comments please consider installing [Better comments](https://rb.gy/dgxjrh) extension on VS code.
+
 
 ## Available Scripts
 
@@ -22,7 +25,4 @@ Runs the client side of the app in the development mode on [http://localhost:300
 yarn server
 ```  
 
-Runs the server side of the app in the development (it will run simultaneously both of the `watch` and `dev` commands) on [http://localhost:5000](http://localhost:5000).  
-
-  
-Note: for better experience with the comments please consider installing [Better comments](https://rb.gy/dgxjrh) extension on VS code.
+Runs the server side of the app in the development (it will run simultaneously both of the `watch` and `dev` commands) on [http://localhost:5000](http://localhost:5000). 
